@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\PostLikesController;
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/register', [RegisteredUserController::class, 'store']);
+// ->middleware('guest')
+
+
 
 Route::apiResource('categories', CategoriesController::class);
 Route::apiResource('posts', PostsController::class);
