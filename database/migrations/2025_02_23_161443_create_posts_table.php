@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('summary')->nullable();
             $table->string('thumbnail')->nullable();
             $table->enum('status', ['draft', 'pending', 'published', 'scheduled', 'archived', 'rejected', 'deleted'])->default('draft');
-            $table->dateTime('published');
+            $table->dateTime('published_at');
             $table->foreignId('category_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
