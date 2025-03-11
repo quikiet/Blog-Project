@@ -19,7 +19,7 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function register(Request $request)
     {
         try {
             $request->validate([
@@ -34,39 +34,57 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($request->string('password')),
             ]);
 
-            event(new Registered($user));
+            $token = $user->createToken($request->name);
 
-            Auth::login($user);
-
-            return response()->json($user, 201);
+            return response()->json([
+                'message' => 'User registered successfully!',
+                'user' => $user,
+                'token' => $token->plainTextToken
+            ], 201);
         } catch (Exception $exception) {
             return response()->json(["error" => $exception->getMessage()], 500);
         }
-        // try {
-        //     $validatedData = $request->validate([
-        //         'name' => ['required', 'string', 'max:255'],
-        //         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users'],
-        //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        //     ]);
+    }
 
-        //     $user = User::create([
-        //         'name' => $validatedData['name'],
-        //         'email' => $validatedData['email'],
-        //         'password' => Hash::make($validatedData['password']),
-        //     ]);
+    public function login(Request $request)
+    {
 
-        //     event(new Registered($user));
-        //     Auth::login($user);
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+            'password' => ['required'],
+        ]);
 
-        //     return response()->json([
-        //         'message' => 'User registered successfully!',
-        //         'user' => $user
-        //     ], 201);
+        $user = User::where('email', $request->email)->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => "Mật khẩu không chính xác",
+            ], 401);
+        }
 
-        // } catch (\Exception $e) {
-        //     return response()->json([
-        //         'error' => $e->getMessage()
-        //     ], 500);
-        // }
+        $token = $user->createToken($user->name);
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token->plainTextToken,
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $user->tokens()->delete();
+        return response()->json([
+            'message' => 'Logged out',
+        ], 200);
+    }
+
+    public function me(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user()
+        ], 200);
     }
 }

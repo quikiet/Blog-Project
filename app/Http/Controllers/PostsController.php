@@ -7,6 +7,7 @@ use App\Http\Requests\StorepostsRequest;
 use App\Http\Requests\UpdatepostsRequest;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostsController extends Controller
 {
@@ -29,12 +30,15 @@ class PostsController extends Controller
                 'title' => "required|max:255",
                 'content' => "required",
                 'summary' => 'nullable|max:255',
-                'thumbnail' => 'nullable',
+                'thumbnail' => 'nullable | string',
                 'published_at' => 'nullable|date',
                 'category_id' => 'required|exists:categories,id',
                 'user_id' => 'required|exists:users,id'
             ]);
 
+            if ($request->hasFile('thumbnail')) {
+                $validateFields['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+            }
             $post = posts::create($validateFields);
 
             return $post;
@@ -45,6 +49,24 @@ class PostsController extends Controller
             ], 500);
         }
     }
+
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = 'images/' . $fileName; // Lưu trong storage/app/public/images
+            Storage::disk('public')->put($filePath, file_get_contents($file));
+
+            return response()->json([
+                'link' => asset('storage/' . $filePath) // Trả về URL ảnh đã lưu
+            ]);
+        }
+
+        return response()->json(['error' => 'Không có file trong request'], 400);
+    }
+
+
 
     /**
      * Display the specified resource.
@@ -72,7 +94,7 @@ class PostsController extends Controller
                 'title' => "required|max:255",
                 'content' => "required",
                 'summary' => 'nullable|max:255',
-                'thumbnail' => 'nullable',
+                'thumbnail' => 'nullable | string',
                 'published_at' => 'nullable|date',
                 'category_id' => 'required|exists:categories,id',
                 'user_id' => 'required|exists:users,id'
@@ -95,7 +117,7 @@ class PostsController extends Controller
     public function destroy($id)
     {
         try {
-            $post = posts::find($id);
+            $post = posts::findOrFail($id);
             $post->delete();
             return $post;
         } catch (Exception $e) {

@@ -55,7 +55,6 @@ class CategoriesController extends Controller
     {
         try {
             $category = categories::findOrFail($id);
-
             return $category;
         } catch (Exception $e) {
             return response()->json([
