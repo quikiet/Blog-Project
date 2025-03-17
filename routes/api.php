@@ -8,6 +8,7 @@ use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
 use App\Http\Controllers\TagsController;
+use App\Http\Middleware\AuthenticationMiddleware;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,10 +26,17 @@ Route::post('/me', [RegisteredUserController::class, 'me'])->middleware('auth:sa
 // ->middleware('guest')
 // ->name('login');
 
+Route::middleware([AuthenticationMiddleware::class])->group(function () {
+    Route::apiResource('posts', PostsController::class)->only(['index', 'show']);
+});
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('categories', CategoriesController::class);
+    Route::apiResource('posts', PostsController::class)->except(['index', 'show']);
+});
 
-Route::apiResource('categories', CategoriesController::class);
-Route::apiResource('posts', PostsController::class);
 Route::post('/upload-image', [PostsController::class, 'uploadImage']);
+
+
 Route::apiResource('comments', CommentsController::class);
 Route::apiResource('tags', TagsController::class);
 

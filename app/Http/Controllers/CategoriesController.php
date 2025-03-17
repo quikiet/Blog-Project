@@ -6,6 +6,7 @@ use App\Models\categories;
 use App\Http\Requests\StorecategoriesRequest;
 use App\Http\Requests\UpdatecategoriesRequest;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use function PHPUnit\Framework\throwException;
 
@@ -14,8 +15,12 @@ class CategoriesController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    use AuthorizesRequests;
     public function index()
     {
+        $this->authorize('viewAny', categories::class);
+
         try {
             $category = categories::all();
             return $category;
@@ -33,6 +38,8 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         try {
+            $this->authorize('create', categories::class);
+
             $validateFields = $request->validate([
                 'name' => 'required | max:255|unique:categories'
             ]);
@@ -42,8 +49,7 @@ class CategoriesController extends Controller
             return $category;
         } catch (Exception $e) {
             return response()->json([
-                "message" => "error",
-                "error" => $e->getMessage()
+                $e->getMessage()
             ], 500);
         }
     }
@@ -54,6 +60,8 @@ class CategoriesController extends Controller
     public function show($id)
     {
         try {
+            $this->authorize('view', categories::class);
+
             $category = categories::findOrFail($id);
             return $category;
         } catch (Exception $e) {
@@ -70,11 +78,12 @@ class CategoriesController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $categories = categories::findOrFail($id);
+            $this->authorize('update', $categories);
             $validateFields = $request->validate([
                 'name' => 'required|unique:categories'
             ]);
 
-            $categories = categories::findOrFail($id);
             if (!$categories) {
                 return response()->json(['message' => 'Danh mục không tồn tại!'], 404);
             }
@@ -99,11 +108,12 @@ class CategoriesController extends Controller
     {
         try {
             $categories = categories::findOrFail($id);
+            $this->authorize('delete', $categories);
             $categories->delete();
             return ["message" => "delete"];
         } catch (Exception $e) {
             return response()->json([
-                'message' => "Đã xảy ra lỗi khi cập nhật danh mục!",
+                'message' => "Đã xảy ra lỗi khi xoá danh mục!",
                 'error' => $e->getMessage()
             ], 500);
         }

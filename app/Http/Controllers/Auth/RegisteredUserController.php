@@ -61,11 +61,12 @@ class RegisteredUserController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken($user->name);
+        $token = $user->createToken($user->name, ['*'], now()->addHours(12));
 
         return response()->json([
             'user' => $user,
             'token' => $token->plainTextToken,
+            'expires_at' => now()->addHours(12)->timestamp,
         ], 200);
     }
 

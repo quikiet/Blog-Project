@@ -13,7 +13,7 @@ class CategoriesPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,15 +21,15 @@ class CategoriesPolicy
      */
     public function view(User $user, categories $categories): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): Response
     {
-        return false;
+        return $user->role === 'admin' ? Response::allow() : Response::deny('Bạn không có quyền để thêm danh này.');
     }
 
     /**
@@ -37,15 +37,15 @@ class CategoriesPolicy
      */
     public function update(User $user, categories $categories): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, categories $categories): bool
+    public function delete(User $user, categories $categories): Response
     {
-        return false;
+        return $user->role === 'admin' ? Response::allow() : Response::deny('Bạn không có quyền để thêm danh này.');
     }
 
     /**

@@ -15,6 +15,7 @@ class posts extends Model
         'content',
         'summary',
         'thumbnail',
+        'status',
         'published_at',
         'category_id',
         'user_id'
@@ -22,7 +23,7 @@ class posts extends Model
 
     public function posts_user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function post_likes()
