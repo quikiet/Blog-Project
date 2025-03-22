@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->hasMany(post_likes::class);
     }
 
+    public function post_views()
+    {
+        return $this->hasMany(post_views::class);
+    }
+
 
 
 }

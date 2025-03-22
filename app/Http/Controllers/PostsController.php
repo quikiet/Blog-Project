@@ -6,6 +6,7 @@ use App\Models\posts;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 class PostsController extends Controller
 {
@@ -17,14 +18,18 @@ class PostsController extends Controller
 
     public function index()
     {
-
+        $user = Auth::user();
         $query = posts::with('posts_user');
 
-        if (auth()->check() && auth()->user()->role === 'admin') {
-            return response()->json($query->get());
+        if ($user && $user->role === 'admin') {
+            $posts = $query->get();
+        } else if ($user && $user->role === 'author') {
+            $posts = $query->where('user_id', $user->id)->orWhere('status', 'published')->get();
+        } else {
+            $posts = $query->where('status', 'published')->get();
         }
 
-        return response()->json($query->where('status', 'published')->get());
+        return response()->json($posts);
     }
 
 
@@ -40,6 +45,7 @@ class PostsController extends Controller
                 'content' => "required",
                 'summary' => 'nullable|max:255',
                 'thumbnail' => 'nullable | string',
+                'status' => 'required|in:draft,pending,published,scheduled,archived,rejected, deleted',
                 'published_at' => 'nullable|date',
                 'category_id' => 'required|exists:categories,id',
                 'user_id' => 'required|exists:users,id'
@@ -84,7 +90,7 @@ class PostsController extends Controller
         try {
             $post = posts::findOrFail($id);
             $this->authorize('view', $post);
-            return $post;
+            return response()->json($post);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "error",

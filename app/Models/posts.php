@@ -18,7 +18,8 @@ class posts extends Model
         'status',
         'published_at',
         'category_id',
-        'user_id'
+        'user_id',
+        'author_id'
     ];
 
     public function posts_user()
@@ -51,6 +52,19 @@ class posts extends Model
         return $this->belongsToMany(tags::class, 'post_tags', 'post_id', 'tag_id');
     }
 
+    public function authors()
+    {
+        return $this->belongsTo(authors::class, 'author_id', 'id');
+    }
 
+    public function refuses()
+    {
+        return $this->hasMany(refuses::class);
+    }
+
+    public function postViews()
+    {
+        return $this->hasMany(post_views::class);
+    }
 
 }

@@ -16,7 +16,9 @@ class PostsPolicy
         if ($user && $user->role === 'admin') {
             return true;
         }
-
+        if ($user && $user->role === 'author') {
+            return true;
+        }
         // Nếu là guest (user == null) hoặc user thường -> chỉ thấy published
         return true;
     }
@@ -26,10 +28,15 @@ class PostsPolicy
      */
     public function view(?User $user, posts $post): bool
     {
-        if (!$user && $user->role !== 'admin') {
-            return $post->status === 'published';
+        if ($user && $user->role === 'admin') {
+            return true;
         }
-        return true;
+
+        if ($user && $user->role === 'author' && $user->id === $post->user_id) {
+            return true;
+        }
+
+        return $post->status === 'published';
     }
 
     /**

@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('refuses', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
+            $table->foreignId('post_id')->constrained()->onDelete('cascade');
+            $table->foreignId('reason_id')->nullable()->constrained('refuse_reasons')->onDelete('set null'); // Sửa từ 'refuseReasons' thành 'refuse_reasons'
             $table->timestamps();
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('refuses');
     }
 };

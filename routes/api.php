@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\PostLikesController;
@@ -33,6 +34,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('categories', CategoriesController::class);
     Route::apiResource('posts', PostsController::class)->except(['index', 'show']);
 });
+Route::apiResource('authors', AuthorsController::class)->parameters([
+    'authors' => 'slug'
+]);
+
 
 Route::post('/upload-image', [PostsController::class, 'uploadImage']);
 
