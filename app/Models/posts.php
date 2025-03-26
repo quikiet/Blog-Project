@@ -12,6 +12,7 @@ class posts extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'content',
         'summary',
         'thumbnail',
@@ -65,6 +66,12 @@ class posts extends Model
     public function postViews()
     {
         return $this->hasMany(post_views::class);
+    }
+
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
 }

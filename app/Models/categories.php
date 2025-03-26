@@ -12,12 +12,18 @@ class categories extends Model
     use HasFactory, HasApiTokens;
 
     protected $fillable = [
-        'name'
+        'name',
+        'slug'
     ];
 
     public function categories_posts()
     {
         return $this->hasMany(posts::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
 

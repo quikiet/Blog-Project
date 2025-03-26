@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('bio');
+            $table->string('bio')->nullable();
             $table->string('email');
             $table->string('avatar')->nullable();
             $table->timestamps();

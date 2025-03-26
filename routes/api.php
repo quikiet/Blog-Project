@@ -28,15 +28,29 @@ Route::post('/me', [RegisteredUserController::class, 'me'])->middleware('auth:sa
 // ->name('login');
 
 Route::middleware([AuthenticationMiddleware::class])->group(function () {
-    Route::apiResource('posts', PostsController::class)->only(['index', 'show']);
+    Route::apiResource('posts', PostsController::class)->only(['index', 'show'])->parameters([
+        'posts' => 'slug'
+    ]);
 });
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('categories', CategoriesController::class);
-    Route::apiResource('posts', PostsController::class)->except(['index', 'show']);
-});
+
+Route::delete('authors/bulk', [AuthorsController::class, 'bulkDelete']);
+
 Route::apiResource('authors', AuthorsController::class)->parameters([
     'authors' => 'slug'
-]);
+])->except('bulkDelete');
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('categories', CategoriesController::class)->parameters([
+        'categories' => 'slug'
+    ]);
+    Route::apiResource('posts', PostsController::class)->except(['index', 'show'])->parameters([
+        'posts' => 'slug'
+    ]);
+    // Route::apiResource('authors', AuthorsController::class)->parameters([
+    //     'authors' => 'slug'
+    // ])->except(['methods: index', 'show']);
+});
 
 
 Route::post('/upload-image', [PostsController::class, 'uploadImage']);

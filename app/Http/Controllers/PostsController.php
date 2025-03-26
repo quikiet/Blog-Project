@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Str;
 class PostsController extends Controller
 {
     /**
@@ -48,10 +49,11 @@ class PostsController extends Controller
                 'status' => 'required|in:draft,pending,published,scheduled,archived,rejected, deleted',
                 'published_at' => 'nullable|date',
                 'category_id' => 'required|exists:categories,id',
-                'user_id' => 'required|exists:users,id'
+                'user_id' => 'required|exists:users,id',
+                'author_id' => 'nullable|exists:authors,id'
             ]);
 
-            // $validateFields['user_id'] = Auth::id();
+            $validateFields['slug'] = Str::slug($validateFields['title']);
 
             if ($request->hasFile('thumbnail')) {
                 $validateFields['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
@@ -85,10 +87,10 @@ class PostsController extends Controller
     }
 
 
-    public function show($id)
+    public function show($slug)
     {
         try {
-            $post = posts::findOrFail($id);
+            $post = posts::where('slug', $slug)->firstOrFail();
             $this->authorize('view', $post);
             return response()->json($post);
         } catch (Exception $e) {
@@ -102,10 +104,10 @@ class PostsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
         try {
-            $post = posts::findOrFail($id);
+            $post = posts::where('slug', $slug)->firstOrFail();
             $this->authorize('update', $post);
             $validateFields = $request->validate([
                 'title' => "required|max:255",
@@ -115,8 +117,11 @@ class PostsController extends Controller
                 'status' => "required",
                 'published_at' => 'nullable|date',
                 'category_id' => 'required|exists:categories,id',
-                'user_id' => 'required|exists:users,id'
+                'user_id' => 'required|exists:users,id',
+                'author_id' => 'nullable|exists:authors,id'
             ]);
+
+            $validateFields['slug'] = Str::slug($validateFields['title']);
 
             $post->update($validateFields);
             return $post;
@@ -131,10 +136,10 @@ class PostsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
         try {
-            $post = posts::findOrFail($id);
+            $post = posts::where('slug', $slug)->firstOrFail();
             $this->authorize('delete', $post);
             $post->delete();
             return $post;

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatecategoriesRequest;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Str;
 use function PHPUnit\Framework\throwException;
 
 class CategoriesController extends Controller
@@ -41,8 +42,10 @@ class CategoriesController extends Controller
             $this->authorize('create', categories::class);
 
             $validateFields = $request->validate([
-                'name' => 'required | max:255|unique:categories'
+                'name' => 'required | max:255|unique:categories,name',
             ]);
+
+            $validateFields['slug'] = Str::slug($validateFields['name']);
 
             $category = categories::create($validateFields);
 
@@ -75,18 +78,21 @@ class CategoriesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
         try {
-            $categories = categories::findOrFail($id);
+            $categories = categories::where('slug', $slug)->firstOrFail();
             $this->authorize('update', $categories);
             $validateFields = $request->validate([
-                'name' => 'required|unique:categories'
+                'name' => 'required|unique:categories,name',
             ]);
 
             if (!$categories) {
                 return response()->json(['message' => 'Danh mục không tồn tại!'], 404);
             }
+
+            $validateFields['slug'] = Str::slug($validateFields['name']);
+
             $categories->update($validateFields);
 
             return response()->json([
@@ -104,10 +110,10 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
         try {
-            $categories = categories::findOrFail($id);
+            $categories = categories::where('slug', $slug)->firstOrFail();
             $this->authorize('delete', $categories);
             $categories->delete();
             return ["message" => "delete"];
