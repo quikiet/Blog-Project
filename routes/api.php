@@ -5,11 +5,13 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
 use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Middleware\AuthenticationMiddleware;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
@@ -114,3 +116,9 @@ Route::prefix('users')->group(function () {
         Route::delete('/avatar', [UserController::class, 'deleteAvatar']);
     });
 });
+Route::prefix('website-settings')->group(function () {
+    Route::get('/', [WebsiteSettingController::class, 'index']);
+    Route::put('/', [WebsiteSettingController::class, 'update']);
+});
+
+Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
