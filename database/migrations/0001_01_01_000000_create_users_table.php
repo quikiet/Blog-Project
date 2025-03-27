@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('avatar')->nullable();
             $table->enum('role', ['admin', 'user', 'author'])->default('admin');
             $table->rememberToken();
+            $table->timestamp('last_active_at')->nullable();
             $table->timestamps();
         });
 
