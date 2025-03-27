@@ -9,6 +9,7 @@ use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
 use App\Http\Controllers\TagsController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthenticationMiddleware;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
@@ -88,3 +89,28 @@ Route::get('posts/{postId}/tags', [PostTagController::class, 'getTagsByPost']);
 
 
 Route::apiResource("post_likes", PostLikesController::class);
+
+
+//////////////////////////////////////////
+// Bach Duc Phuoc & Vuong
+
+Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'getAll']);
+
+    Route::post('/', [UserController::class, 'store']);
+
+    Route::prefix('{id}')->group(function () {
+        Route::get('/', [UserController::class, 'show']);
+
+        Route::put('/', [UserController::class, 'update']);
+
+        Route::delete('/', [UserController::class, 'destroy']);
+
+        Route::get('/posts', [UserController::class, 'getUserPosts']);
+        Route::get('/comments', [UserController::class, 'getUserComments']);
+        Route::get('/likes', [UserController::class, 'getUserPostLikes']);
+
+        Route::post('/avatar', [UserController::class, 'updateAvatar']);
+        Route::delete('/avatar', [UserController::class, 'deleteAvatar']);
+    });
+});
