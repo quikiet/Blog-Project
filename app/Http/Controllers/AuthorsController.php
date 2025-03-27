@@ -55,7 +55,7 @@ class AuthorsController extends Controller
             ]);
 
             $validateFields['slug'] = $this->generateSlugUnique($validateFields['name']);
-            $validateFields['avatar'] = "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg";
+            // $validateFields['avatar'] = "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg";
             $author = authors::create($validateFields);
 
             return response()->json([

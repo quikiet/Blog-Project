@@ -20,7 +20,7 @@ class PostsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = posts::with('posts_user');
+        $query = posts::with('posts_user', 'authors');
 
         if ($user && $user->role === 'admin') {
             $posts = $query->get();
