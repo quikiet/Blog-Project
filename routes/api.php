@@ -13,6 +13,7 @@ use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Middleware\AuthenticationMiddleware;
+use App\Models\refuseReasons;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::post('/upload-image', [PostsController::class, 'uploadImage']);
 
 
+Route::apiResource('refuse-reasons', refuseReasons::class);
 Route::apiResource('comments', CommentsController::class);
 Route::apiResource('tags', TagsController::class);
 

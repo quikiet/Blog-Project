@@ -60,7 +60,7 @@ class posts extends Model
 
     public function refuses()
     {
-        return $this->hasMany(refuses::class);
+        return $this->hasMany(refuses::class, 'post_id');
     }
 
     public function postViews()

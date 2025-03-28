@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\posts;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -105,9 +106,22 @@ class UserController extends Controller
     /**
      * Lấy tất cả bài viết của người dùng
      */
+    // public function getUserPosts(string $id)
+    // {
+    //     $user = User::with('user_posts')->findOrFail($id);
+    //     return response()->json([
+    //         'user' => $this->formatUserResponse($user),
+    //         'posts' => $user->user_posts
+    //     ]);
+    // }
+
     public function getUserPosts(string $id)
     {
-        $user = User::with('user_posts')->findOrFail($id);
+        $user = User::with([
+            'user_posts' => function ($query) {
+                $query->with(['refuses.refuseReason']);
+            }
+        ])->findOrFail($id);
         return response()->json([
             'user' => $this->formatUserResponse($user),
             'posts' => $user->user_posts

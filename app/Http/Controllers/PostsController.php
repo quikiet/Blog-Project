@@ -151,4 +151,19 @@ class PostsController extends Controller
         }
     }
 
+    public function userPosts($slug)
+    {
+        try {
+            $posts = posts::where('slug', $slug)
+                ->with(['refuses.refuseReason'])
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

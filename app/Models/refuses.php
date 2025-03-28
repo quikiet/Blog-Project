@@ -10,7 +10,7 @@ class refuses extends Model
     /** @use HasFactory<\Database\Factories\RefusesFactory> */
     use HasFactory;
 
-    protected $fillalble = [
+    protected $fillable = [
         'post_id',
         'reason_id'
     ];
