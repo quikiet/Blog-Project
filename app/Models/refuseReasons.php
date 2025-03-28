@@ -10,7 +10,7 @@ class refuseReasons extends Model
     /** @use HasFactory<\Database\Factories\RefuseReasonsFactory> */
     use HasFactory;
 
-    protected $fillalble = [
+    protected $fillable = [
         'reason'
     ];
 

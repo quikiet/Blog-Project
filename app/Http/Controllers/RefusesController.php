@@ -18,7 +18,7 @@ class RefusesController extends Controller
     {
         try {
             $refuseReason = refuseReasons::with('refuses')->get();
-            return response()->json(['message' => 'Truy vấn lý do từ chối thành công'], 200);
+            return response()->json($refuseReason, 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => "Lỗi truy vấn lý do từ chối",
@@ -34,7 +34,7 @@ class RefusesController extends Controller
     {
         try {
             $validationFields = $request->validate([
-                'reason' => 'required|unique'
+                'reason' => 'required'
             ]);
 
             $refuseReason = refuseReasons::create($validationFields);
@@ -62,7 +62,7 @@ class RefusesController extends Controller
     {
         try {
             $validationFields = $request->validate([
-                'reason' => 'required|unique'
+                'reason' => 'required'
             ]);
 
             $refuseReason = refuseReasons::findOrFail($id);

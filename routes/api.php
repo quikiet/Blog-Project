@@ -9,6 +9,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
+use App\Http\Controllers\RefuseReasonsController;
+use App\Http\Controllers\RefusesController;
 use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebsiteSettingController;
@@ -43,6 +45,9 @@ Route::apiResource('authors', AuthorsController::class)->parameters([
     'authors' => 'slug'
 ])->except('bulkDelete');
 
+Route::post('refuse-reasons/bulk', [RefuseReasonsController::class, 'bulkDelete']);
+
+Route::apiResource('refuse-reasons', RefuseReasonsController::class)->except('bulkDelete');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('categories', CategoriesController::class)->parameters([
@@ -51,6 +56,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('posts', PostsController::class)->except(['index', 'show'])->parameters([
         'posts' => 'slug'
     ]);
+
     // Route::apiResource('authors', AuthorsController::class)->parameters([
     //     'authors' => 'slug'
     // ])->except(['methods: index', 'show']);
@@ -60,7 +66,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::post('/upload-image', [PostsController::class, 'uploadImage']);
 
 
-Route::apiResource('refuse-reasons', refuseReasons::class);
 Route::apiResource('comments', CommentsController::class);
 Route::apiResource('tags', TagsController::class);
 
