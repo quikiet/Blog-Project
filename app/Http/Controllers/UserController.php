@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 
 use App\Models\User;
@@ -29,26 +30,27 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', Rules\Password::defaults()],
-            'role' => ['sometimes', 'string', 'in:admin,editor,user'],
-            'avatar' => ['sometimes', 'url', 'max:255'], // Validate là URL
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+                'password' => ['required', Rules\Password::defaults()],
+                'role' => ['sometimes', 'string', 'in:admin,author,user'],
+                'avatar' => ['sometimes', 'url', 'max:255'], // Validate là URL
+            ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? 'user',
-            'avatar' => $validated['avatar'] ?? null, // Lưu trực tiếp URL
-        ]);
+            $validated['password'] = Hash::make($validated['password']);
+            $user = User::create($validated);
 
-        return response()->json([
-            'message' => 'User created successfully',
-            'user' => $this->formatUserResponse($user)
-        ], 201);
+            return response()->json([
+                'message' => 'User created successfully',
+                'user' => $this->formatUserResponse($user)
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -71,7 +73,7 @@ class UserController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['sometimes', Rules\Password::defaults()],
-            'role' => ['sometimes', 'string', 'in:admin,editor,user'],
+            'role' => ['sometimes', 'string', 'in:admin,author,user'],
             'avatar' => ['sometimes', 'url', 'max:255'], // Validate là URL
         ]);
 

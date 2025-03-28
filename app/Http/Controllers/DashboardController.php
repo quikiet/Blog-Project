@@ -35,7 +35,7 @@ class DashboardController extends Controller
                         'email' => $user->email,
                         'role' => $user->role,
                         'avatar' => $user->avatar,
-                        'created_at' => $user->created_at->toDateTimeString(),
+                        'created_at' => $user->created_at,
                         'posts_count' => $user->user_posts_count
                     ];
                 })
@@ -63,7 +63,7 @@ class DashboardController extends Controller
                         'id' => $post->id,
                         'title' => $post->title,
                         'status' => $post->status,
-                        'published_at' => $post->published_at ? $post->published_at->toDateTimeString() : null,
+                        'published_at' => $post->published_at ? $post->published_at : null,
                         'thumbnail' => $post->thumbnail,
                         'user' => [
                             'id' => $post->posts_user->id,
