@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Middleware\AuthenticationMiddleware;
 use App\Models\refuseReasons;
+use App\Models\refuses;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,8 @@ Route::apiResource('authors', AuthorsController::class)->parameters([
 Route::post('refuse-reasons/bulk', [RefuseReasonsController::class, 'bulkDelete']);
 
 Route::apiResource('refuse-reasons', RefuseReasonsController::class)->except('bulkDelete');
+
+Route::apiResource('refuses', RefusesController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('categories', CategoriesController::class)->parameters([

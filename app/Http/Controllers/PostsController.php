@@ -90,7 +90,7 @@ class PostsController extends Controller
     public function show($slug)
     {
         try {
-            $post = posts::where('slug', $slug)->firstOrFail();
+            $post = posts::with('posts_user', 'authors', 'refuses')->where('slug', $slug)->firstOrFail();
             $this->authorize('view', $post);
             return response()->json($post);
         } catch (Exception $e) {

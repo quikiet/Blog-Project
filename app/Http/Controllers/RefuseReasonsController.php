@@ -51,9 +51,16 @@ class RefuseReasonsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(refuseReasons $refuseReasons)
+    public function show($id)
     {
-        //
+        try {
+            $refuseReason = refuseReasons::where('id', $id)->firstOrFail();
+            return response()->json($refuseReason, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 200);
+        }
     }
 
     /**
@@ -85,7 +92,7 @@ class RefuseReasonsController extends Controller
     public function destroy($id)
     {
         try {
-            $refuseReason = refuseReasons::findOrFail($id);
+            $refuseReason = refuseReasons::where('id', $id)->firstOrFail();
             $refuseReason->delete();
             return response()->json(['message' => 'Xoá lý do thành công'], 200);
         } catch (Exception $e) {

@@ -11,20 +11,13 @@ use Illuminate\Http\Request;
 
 class RefusesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        try {
-            $refuseReason = refuseReasons::with('refuses')->get();
-            return response()->json($refuseReason, 200);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => "Lỗi truy vấn lý do từ chối",
-                'error' => $e->getMessage()
-            ], 500);
-        }
+        $refuse = refuses::all();
+        return response()->json([
+            'message' => 'Lấy ràng buộc các bài báo bị từ chối',
+            'data' => $refuse
+        ], 200);
     }
 
     /**
@@ -34,14 +27,18 @@ class RefusesController extends Controller
     {
         try {
             $validationFields = $request->validate([
-                'reason' => 'required'
+                'post_id' => 'required|exists:posts,id',
+                'reason_id' => 'required|exists:refuse_reasons,id'
             ]);
 
-            $refuseReason = refuseReasons::create($validationFields);
-            return response()->json(['message' => 'Thêm lý do thành công'], 201);
+            $refuses = refuses::create($validationFields);
+            return response()->json([
+                'message' => 'Thêm ràng buộc lý do từ chối bài viết thành công',
+                'data' => $refuses
+            ], 201);
         } catch (Exception $e) {
             return response()->json([
-                'message' => "Lỗi khi thêm",
+                'message' => "Lỗi khi thêm ràng buộc",
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -50,9 +47,16 @@ class RefusesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(refuses $refuses)
+    public function show($id)
     {
-        //
+        try {
+            $refuse = refuses::where('id', $id)->firstOrFail();
+            return response()->json($refuse, 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 200);
+        }
     }
 
     /**
@@ -62,19 +66,22 @@ class RefusesController extends Controller
     {
         try {
             $validationFields = $request->validate([
-                'reason' => 'required'
+                'post_id' => 'required|exists:posts,id',
+                'reason_id' => 'required|exists:refuse_reasons,id'
             ]);
 
-            $refuseReason = refuseReasons::findOrFail($id);
-            $refuseReason->update($validationFields);
-            return response()->json(['message' => 'Sửa lý do thành công'], 200);
+            $refuses = refuses::findOrFail($id);
+            $refuses->update($validationFields);
+            return response()->json([
+                'message' => 'Cập nhật buộc lý do từ chối bài viết thành công',
+                'data' => $refuses
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
-                'message' => "Lỗi khi cập nhật",
+                'message' => "Lỗi khi cập nhật ràng buộc",
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
@@ -83,8 +90,8 @@ class RefusesController extends Controller
     public function destroy($id)
     {
         try {
-            $refuseReason = refuseReasons::findOrFail($id);
-            $refuseReason->delete();
+            $refuse = refuses::where('id', $id)->firstOrFail();
+            $refuse->delete();
             return response()->json(['message' => 'Xoá lý do thành công'], 200);
         } catch (Exception $e) {
             return response()->json([
