@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostStatusChanged;
 use App\Models\posts;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Str;
 class PostsController extends Controller
@@ -122,9 +124,12 @@ class PostsController extends Controller
             ]);
 
             $validateFields['slug'] = Str::slug($validateFields['title']);
-
+            $oldStatus = $post->status;
             $post->update($validateFields);
-            return $post;
+            if ($oldStatus !== $post->status) {
+                Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
+            }
+            return response()->json(['message' => 'Cập nhật bài viết thành công']);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "error",
