@@ -34,6 +34,17 @@ Route::post('/me', [RegisteredUserController::class, 'me'])->middleware('auth:sa
 // ->middleware('guest')
 // ->name('login');
 
+
+Route::apiResource('categories', CategoriesController::class)->only(['index', 'show'])->parameters([
+    'categories' => 'slug'
+]);
+
+
+Route::get('/posts/featured', [PostsController::class, 'getFeaturedPost']);
+Route::get('/posts/sub-features', [PostsController::class, 'getSubFeatures']);
+Route::get('/posts/latest', [PostsController::class, 'getLatestPosts']);
+Route::get('/posts/trending', [PostsController::class, 'getTrendingPosts']);
+
 Route::middleware([AuthenticationMiddleware::class])->group(function () {
     Route::apiResource('posts', PostsController::class)->only(['index', 'show'])->parameters([
         'posts' => 'slug'
@@ -53,7 +64,7 @@ Route::apiResource('refuse-reasons', RefuseReasonsController::class)->except('bu
 Route::apiResource('refuses', RefusesController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('categories', CategoriesController::class)->parameters([
+    Route::apiResource('categories', CategoriesController::class)->except(['index', 'show'])->parameters([
         'categories' => 'slug'
     ]);
     Route::apiResource('posts', PostsController::class)->except(['index', 'show'])->parameters([

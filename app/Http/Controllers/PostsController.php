@@ -166,4 +166,72 @@ class PostsController extends Controller
         }
     }
 
+    public function getFeaturedPost()
+    {
+        try {
+            $post = posts::with(['posts_user', 'authors'])
+                ->where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->first();
+
+            if (!$post) {
+                return response()->json(['message' => 'Không có bài viết nổi bật'], 404);
+            }
+
+            return response()->json($post, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching featured post: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết nổi bật'], 500);
+        }
+    }
+
+    public function getSubFeatures()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->skip(1)
+                ->take(2)
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching sub features: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết phụ'], 500);
+        }
+    }
+
+    public function getLatestPosts()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->skip(3)
+                ->take(4)
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching latest posts: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết mới nhất'], 500);
+        }
+    }
+
+    public function getTrendingPosts()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'published')
+                // ->orderBy('views', 'desc')
+                ->take(3)
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching trending posts: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết thịnh hành'], 500);
+        }
+    }
 }

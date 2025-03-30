@@ -37,7 +37,7 @@ class RegisteredUserController extends Controller
             $token = $user->createToken($request->name);
 
             return response()->json([
-                'message' => 'User registered successfully!',
+                'message' => 'Tạo người dùng thành công!',
                 'user' => $user,
                 'token' => $token->plainTextToken
             ], 201);

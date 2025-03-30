@@ -20,7 +20,7 @@ class CategoriesController extends Controller
     use AuthorizesRequests;
     public function index()
     {
-        $this->authorize('viewAny', categories::class);
+        // $this->authorize('viewAny', categories::class);
 
         try {
             $category = categories::all();
