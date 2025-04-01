@@ -115,23 +115,21 @@ class UserController extends Controller
     //     ]);
     // }
 
-    public function getUserPosts(string $id)
+    // app/Http/Controllers/UserController.php
+    public function getUserPosts(Request $request, $id)
     {
-        $user = User::with([
-            'user_posts' => function ($query) {
-                $query->with(['refuses.refuseReason']);
-            }
-        ])->findOrFail($id);
-        return response()->json([
-            'user' => $this->formatUserResponse($user),
-            'posts' => $user->user_posts
-        ]);
-    }
+        $user = User::findOrFail($id);
+        $perPage = $request->input('per_page', 10); // Mặc định 10 bài mỗi trang
+        $posts = posts::with(['refuses.refuseReason'])
+            ->where('user_id', $id)
+            ->paginate($perPage);
 
+        return response()->json($posts);
+    }
     /**
      * Lấy tất cả bình luận của người dùng
      */
-    public function getUserComments(string $id)
+    public function getUserComments($id)
     {
         $user = User::with('user_comments')->findOrFail($id);
         return response()->json([
@@ -143,7 +141,7 @@ class UserController extends Controller
     /**
      * Lấy tất cả lượt like bài viết của người dùng
      */
-    public function getUserPostLikes(string $id)
+    public function getUserPostLikes($id)
     {
         $user = User::with('post_likes')->findOrFail($id);
         return response()->json([
