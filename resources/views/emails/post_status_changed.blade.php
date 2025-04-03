@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cập nhật trạng thái bài viết</title>
+    <title>Thông Tin Bài Viết</title>
 </head>
 
 <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
@@ -13,7 +13,7 @@
         style="max-width: 600px; background-color: #fff; padding: 20px; border-radius: 10px;">
         <tr>
             <td align="center" style="padding-bottom: 20px;">
-                <h2 style="color: #333;">Cập Nhật Trạng Thái Bài Viết</h2>
+                <h2 style="color: #333;">Thông Tin Bài Viết</h2>
             </td>
         </tr>
 
@@ -35,8 +35,11 @@
                 @elseif($post->status === 'draft')
                     <span style="color: #6c757d; font-size: 18px; font-weight: bold;">Nháp 📝</span>
                 @elseif($post->status === 'scheduled')
-                    <span style="color: #6c757d; font-size: 18px; font-weight: bold;">Đã lên lịch ngày:
+                    <span style="color: #6c757d; font-size: 18px; font-weight: bold;">Đã lên lịch ngày ⏰:
                         {{ $post->published_at }}</span>
+                @elseif($post->status === 'deleted')
+                    <span style="color: #6c757d; font-size: 18px; font-weight: bold;">Bài viết đã bị xoá 🗑️ vì vi phạm <a
+                            style="color:blue;">Chính sách đăng bài</a> của chúng tôi</span>
                 @else
                     <span style="color: #007bff; font-size: 18px; font-weight: bold;">{{ ucfirst($post->status) }}</span>
                 @endif
