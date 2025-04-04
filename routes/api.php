@@ -44,6 +44,8 @@ Route::get('/posts/featured', [PostsController::class, 'getFeaturedPost']);
 Route::get('/posts/sub-features', [PostsController::class, 'getSubFeatures']);
 Route::get('/posts/latest', [PostsController::class, 'getLatestPosts']);
 Route::get('/posts/trending', [PostsController::class, 'getTrendingPosts']);
+Route::get('/posts/pending', [PostsController::class, 'getPendingPosts']);
+Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
 
 Route::middleware([AuthenticationMiddleware::class])->group(function () {
     Route::apiResource('posts', PostsController::class)->only(['index', 'show'])->parameters([

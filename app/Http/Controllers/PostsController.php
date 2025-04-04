@@ -26,7 +26,7 @@ class PostsController extends Controller
         $query = posts::with('posts_user', 'authors');
 
         if ($user && $user->role === 'admin') {
-            $posts = $query->get();
+            $posts = $query->orderByDesc('created_at')->get();
         } else if ($user && $user->role === 'author') {
             $posts = $query->where('user_id', $user->id)->orWhere('status', 'published')->get();
         } else {
@@ -269,8 +269,8 @@ class PostsController extends Controller
             $posts = posts::with(['posts_user', 'authors'])
                 ->where('status', 'published')
                 ->orderBy('published_at', 'desc')
-                ->skip(3)
-                ->take(4)
+                ->skip(4)
+                ->take(8)
                 ->get();
 
             return response()->json($posts, 200);
@@ -293,6 +293,34 @@ class PostsController extends Controller
         } catch (Exception $e) {
             \Log::error("Error fetching trending posts: {$e->getMessage()}");
             return response()->json(['message' => 'Lỗi khi lấy bài viết thịnh hành'], 500);
+        }
+    }
+
+    public function getArchivedPosts()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'archived')
+                ->get();
+
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching archived posts: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết lưu trữ'], 500);
+        }
+    }
+
+    public function getPendingPosts()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching pending posts: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết đang chờ'], 500);
         }
     }
 }
