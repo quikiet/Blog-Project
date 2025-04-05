@@ -60,13 +60,21 @@ class CategoriesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($slug)
     {
         try {
-            $this->authorize('view', categories::class);
 
-            $category = categories::findOrFail($id);
-            return $category;
+            // $this->authorize('view', categories::class);
+
+            $post = categories::with('categories_posts')->where('slug', $slug)->first();
+
+            if (!$post) {
+                return response()->json([
+                    'message' => 'Category not found.'
+                ], 404);
+            }
+
+            return response()->json($post, 200);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "error",
@@ -74,6 +82,7 @@ class CategoriesController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Update the specified resource in storage.

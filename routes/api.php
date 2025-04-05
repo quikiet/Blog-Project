@@ -47,11 +47,6 @@ Route::get('/posts/trending', [PostsController::class, 'getTrendingPosts']);
 Route::get('/posts/pending', [PostsController::class, 'getPendingPosts']);
 Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
 
-Route::middleware([AuthenticationMiddleware::class])->group(function () {
-    Route::apiResource('posts', PostsController::class)->only(['index', 'show'])->parameters([
-        'posts' => 'slug'
-    ]);
-});
 
 Route::delete('authors/bulk', [AuthorsController::class, 'bulkDelete']);
 
@@ -65,6 +60,11 @@ Route::apiResource('refuse-reasons', RefuseReasonsController::class)->except('bu
 
 Route::apiResource('refuses', RefusesController::class);
 
+Route::middleware([AuthenticationMiddleware::class])->group(function () {
+    Route::apiResource('posts', PostsController::class)->only(['index', 'show'])->parameters([
+        'posts' => 'slug'
+    ]);
+});
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('categories', CategoriesController::class)->except(['index', 'show'])->parameters([
         'categories' => 'slug'

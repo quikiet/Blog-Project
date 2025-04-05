@@ -18,7 +18,7 @@ class categories extends Model
 
     public function categories_posts()
     {
-        return $this->hasMany(posts::class);
+        return $this->hasMany(posts::class, 'category_id');
     }
 
     public function getRouteKeyName()

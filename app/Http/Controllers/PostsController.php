@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PostStatusChanged;
+use App\Models\categories;
 use App\Models\posts;
 use Cache;
 use Exception;
@@ -323,4 +324,5 @@ class PostsController extends Controller
             return response()->json(['message' => 'Lỗi khi lấy bài viết đang chờ'], 500);
         }
     }
+
 }
