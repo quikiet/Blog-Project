@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
@@ -72,7 +73,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('posts', PostsController::class)->except(['index', 'show'])->parameters([
         'posts' => 'slug'
     ]);
-
+    Route::get('notifications', [NotificationsController::class, 'getNotifications']);
+    Route::get('notifications/unread-count', [NotificationsController::class, 'getUnreadCount']);
+    Route::post('notifications/read/{id}', [NotificationsController::class, 'markAsRead']);
     // Route::apiResource('authors', AuthorsController::class)->parameters([
     //     'authors' => 'slug'
     // ])->except(['methods: index', 'show']);

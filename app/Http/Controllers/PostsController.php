@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Mail\PostStatusChanged;
 use App\Models\categories;
 use App\Models\posts;
+use App\Models\User;
+use App\Notifications\NewPostCreated;
 use Cache;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -81,9 +83,16 @@ class PostsController extends Controller
                 $validateFields['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
             }
 
+
+            $admins = User::where('role', 'admin')->get();
+
+
             if (!empty($foundForbiddenWords)) {
                 $validateFields['status'] = "deleted";
                 $post = posts::create($validateFields);
+                foreach ($admins as $admin) {
+                    $admin->notify(new NewPostCreated($post));
+                }
                 $post->load('posts_user');
                 if ($post->posts_user) {
                     Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
@@ -96,6 +105,9 @@ class PostsController extends Controller
                 $post = posts::create($validateFields);
                 if ($post->posts_user) {
                     Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
+                }
+                foreach ($admins as $admin) {
+                    $admin->notify(new NewPostCreated($post));
                 }
                 return response()->json([
                     $post
