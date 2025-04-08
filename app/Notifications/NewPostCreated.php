@@ -42,9 +42,16 @@ class NewPostCreated extends Notification
 
     public function toDatabase($notifiable)
     {
+        $user = $this->post->posts_user;
         return [
-            'message' => "{$this->post->posts_user->name} đã đăng tải bài viết mới.",
-            'type' => 'new_post',
+            'message' => "Bạn có thông báo mới từ {$this->post->posts_user->name}.",
+            'type' => "new_post",
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'avatar' => $user->avatar ?? '',
+                'post_slug' => $this->post->slug,
+            ],
         ];
     }
 

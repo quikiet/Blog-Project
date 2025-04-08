@@ -76,6 +76,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
     Route::get('notifications/unread-count', [NotificationsController::class, 'getUnreadCount']);
     Route::post('notifications/read/{id}', [NotificationsController::class, 'markAsRead']);
+    Route::delete('notifications', [NotificationsController::class, 'deleteNotifications']);
+    Route::post('notifications/readAll', [NotificationsController::class, 'readAll']);
     // Route::apiResource('authors', AuthorsController::class)->parameters([
     //     'authors' => 'slug'
     // ])->except(['methods: index', 'show']);

@@ -39,7 +39,37 @@ class NotificationsController extends Controller
             $user = auth()->user();
             $notifications = $user->notifications()->where('id', $id)->firstOrFail();
             $notifications->markAsRead();
+            $notifications->update(['read_at' => now()]);
             return response()->json(['message' => 'Đã đánh dấu thông báo là đã đọc'], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "Đã có lỗi xảy ra trong quá trình đọc thông báo"
+            ], 500);
+        }
+    }
+
+    public function readAll(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            foreach ($user->unreadNotifications as $notification) {
+                $notification->markAsRead();
+                $notification->update(['read_at' => now()]);
+            }
+            return response()->json(['message' => 'Đã đánh dấu thông báo là đã đọc tất cả'], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "Đã có lỗi xảy ra trong quá trình đọc thông báo"
+            ], 500);
+        }
+    }
+
+    public function deleteNotifications(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $user->notifications()->delete();
+            return response()->json(['message' => 'Đã xoá thông báo thành công'], 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => "Đã có lỗi xảy ra trong quá trình đọc thông báo"
