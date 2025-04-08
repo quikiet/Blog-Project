@@ -36,7 +36,10 @@ class PostsPolicy
             return true;
         }
 
-        return $post->status === 'published';
+        if (in_array($post->status, ['published', 'archived'])) {
+            return true;
+        }
+        return false;
     }
 
     /**
