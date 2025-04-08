@@ -7,16 +7,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewPostCreated extends Notification
+class NewUserRegistered extends Notification
 {
     use Queueable;
-    public $post;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct($post)
+
+    public $user;
+    public function __construct($user)
     {
-        $this->post = $post;
+        $this->user = $user;
     }
 
     /**
@@ -26,36 +28,34 @@ class NewPostCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return ['database'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable)
     {
         return (new MailMessage)
-            ->subject('Thông báo: Bài viết mới được đăng tải')
-            ->line("{$this->post->posts_user->name} đã đăng tải bài viết mới: {$this->post->title}")
-            ->action('Xem chi tiết', url('/admin/posts/pending'))
-            ->line('Cảm ơn bạn đã sử dụng hệ thống!');
+            ->subject('Thông báo: Người dùng mới đăng ký')
+            ->line("Người dùng mới đăng ký: {$this->user->name} (Email: {$this->user->email})")
+            ->action('Truy cập trang', url('https://tqkdomain.io.vn/front-end/'))
+            ->line('Cảm ơn bạn đã sử dụng trang web của tôi!');
     }
 
     public function toDatabase($notifiable)
     {
-        $user = $this->post->posts_user;
         return [
-            'message' => "Bạn có thông báo mới từ {$this->post->posts_user->name}.",
-            'type' => "new_post",
+            'message' => "Người dùng mới đăng ký: {$this->user->name}",
+            'type' => 'new_user',
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'avatar' => $user->avatar ?? '',
-                'post_slug' => $this->post->slug,
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+                'avatar' => $this->user->avatar ?? '',
             ],
         ];
     }
-
     /**
      * Get the array representation of the notification.
      *

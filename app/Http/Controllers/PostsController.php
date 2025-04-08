@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Notification;
 use Str;
 class PostsController extends Controller
 {
@@ -90,9 +91,7 @@ class PostsController extends Controller
             if (!empty($foundForbiddenWords)) {
                 $validateFields['status'] = "deleted";
                 $post = posts::create($validateFields);
-                foreach ($admins as $admin) {
-                    $admin->notify(new NewPostCreated($post));
-                }
+                Notification::send($admins, new NewPostCreated($post));
                 $post->load('posts_user');
                 if ($post->posts_user) {
                     Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
@@ -106,9 +105,7 @@ class PostsController extends Controller
                 if ($post->posts_user) {
                     Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
                 }
-                foreach ($admins as $admin) {
-                    $admin->notify(new NewPostCreated($post));
-                }
+                Notification::send($admins, new NewPostCreated($post));
                 return response()->json([
                     $post
                 ], 201);
