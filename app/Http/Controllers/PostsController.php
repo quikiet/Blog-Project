@@ -334,4 +334,16 @@ class PostsController extends Controller
         }
     }
 
+    public function getScheduledPosts()
+    {
+        try {
+            $posts = posts::with(['posts_user', 'authors'])
+                ->where('status', 'scheduled')
+                ->get();
+            return response()->json($posts, 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching pending posts: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy bài viết đang chờ'], 500);
+        }
+    }
 }

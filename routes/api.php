@@ -47,6 +47,7 @@ Route::get('/posts/latest', [PostsController::class, 'getLatestPosts']);
 Route::get('/posts/trending', [PostsController::class, 'getTrendingPosts']);
 Route::get('/posts/pending', [PostsController::class, 'getPendingPosts']);
 Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
+Route::get('/posts/scheduled', [PostsController::class, 'getScheduledPosts']);
 
 
 Route::delete('authors/bulk', [AuthorsController::class, 'bulkDelete']);
