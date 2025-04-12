@@ -27,7 +27,7 @@ class PostsController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = posts::with('posts_user', 'authors');
+        $query = posts::with('posts_user', 'authors', 'category');
 
         if ($user && $user->role === 'admin') {
             $posts = $query->orderByDesc('created_at')->get();
