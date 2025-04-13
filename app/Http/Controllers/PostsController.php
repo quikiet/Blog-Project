@@ -346,4 +346,22 @@ class PostsController extends Controller
             return response()->json(['message' => 'Lỗi khi lấy bài viết đang chờ'], 500);
         }
     }
+
+
+    public function getPostAmountByStatus($status)
+    {
+        // $this->authorize('viewAny', categories::class);
+        try {
+            $posts = posts::where('status', $status)->count();
+            return response()->json([
+                'status' => $status,
+                'count' => $posts
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "message" => "error",
+                "error" => $e->getMessage()
+            ], 500);
+        }
+    }
 }

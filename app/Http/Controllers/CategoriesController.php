@@ -23,7 +23,7 @@ class CategoriesController extends Controller
         // $this->authorize('viewAny', categories::class);
 
         try {
-            $category = categories::all();
+            $category = categories::withCount('categories_posts')->get();
             return $category;
         } catch (Exception $e) {
             return response()->json([

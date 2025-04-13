@@ -41,6 +41,7 @@ Route::apiResource('categories', CategoriesController::class)->only(['index', 's
 ]);
 
 
+Route::get('/posts/count_post_by_category/{status}', [PostsController::class, 'getPostAmountByStatus']);
 Route::get('/posts/featured', [PostsController::class, 'getFeaturedPost']);
 Route::get('/posts/sub-features', [PostsController::class, 'getSubFeatures']);
 Route::get('/posts/latest', [PostsController::class, 'getLatestPosts']);
@@ -68,7 +69,7 @@ Route::middleware([AuthenticationMiddleware::class])->group(function () {
     ]);
 });
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('categories', CategoriesController::class)->except(['index', 'show'])->parameters([
+    Route::apiResource('categories', CategoriesController::class)->except(['index', 'show', 'countPostByCategory'])->parameters([
         'categories' => 'slug'
     ]);
     Route::apiResource('posts', PostsController::class)->except(['index', 'show'])->parameters([
