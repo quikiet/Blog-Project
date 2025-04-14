@@ -117,13 +117,32 @@ class AuthorsController extends Controller
             $author->delete();
             return response()->json([
                 'message' => 'Author is deleted successfully'
-            ], 204);
+            ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'message' => "Đã xảy ra lỗi khi xoá tác giả!",
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function restore($slug)
+    {
+        try {
+            $author = authors::withTrashed()->where('slug', $slug);
+            $author->restore();
+            return response()->json(['message' => 'Tác giả đã được khôi phục']);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "Đã xảy ra lỗi khi khôi phục tác giả!",
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDeletedAuthors()
+    {
+        return authors::onlyTrashed()->get();
     }
 
     public function bulkDelete(Request $request)

@@ -51,11 +51,13 @@ Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
 Route::get('/posts/scheduled', [PostsController::class, 'getScheduledPosts']);
 
 
+Route::put('authors/restore/{slug}', [AuthorsController::class, 'restore']);
+Route::get('authors/deleted', [AuthorsController::class, 'getDeletedAuthors']);
 Route::delete('authors/bulk', [AuthorsController::class, 'bulkDelete']);
 
 Route::apiResource('authors', AuthorsController::class)->parameters([
     'authors' => 'slug'
-])->except('bulkDelete');
+])->except('bulkDelete', 'restore', 'getDeletedAuthors');
 
 Route::post('refuse-reasons/bulk', [RefuseReasonsController::class, 'bulkDelete']);
 
