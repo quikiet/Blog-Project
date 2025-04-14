@@ -323,7 +323,7 @@ class PostsController extends Controller
     public function getPendingPosts()
     {
         try {
-            $posts = posts::with(['posts_user', 'authors'])
+            $posts = posts::with(['posts_user', 'authors', 'category'])
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')
                 ->get();
