@@ -19,7 +19,9 @@ return new class extends Migration {
         Schema::table('posts', function (Blueprint $table) {
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('restrict');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('author_id')->nullable()->references('author_id')->on('authors')->onDelete('restrict');
+            $table->unsignedBigInteger('author_id')->nullable()->change();
+            $table->foreign('author_id')->references('author_id')->on('authors')->onDelete('restrict');
+
         });
     }
 

@@ -364,4 +364,17 @@ class PostsController extends Controller
             ], 500);
         }
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->query('keyword');
+
+        $posts = posts::where('title', 'like', "%{$keyword}%")
+            ->orWhere('summary', 'like', "%{$keyword}%")
+            ->orWhere('content', 'like', "%{$keyword}%")
+            ->get();
+
+        return response()->json($posts);
+    }
+
 }

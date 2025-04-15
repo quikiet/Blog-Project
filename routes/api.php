@@ -49,6 +49,7 @@ Route::get('/posts/trending', [PostsController::class, 'getTrendingPosts']);
 Route::get('/posts/pending', [PostsController::class, 'getPendingPosts']);
 Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
 Route::get('/posts/scheduled', [PostsController::class, 'getScheduledPosts']);
+Route::get('/posts/search', [PostsController::class, 'search']);
 
 
 Route::put('authors/restore/{slug}', [AuthorsController::class, 'restore']);
