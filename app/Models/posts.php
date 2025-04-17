@@ -66,7 +66,7 @@ class posts extends Model
 
     public function postViews()
     {
-        return $this->hasMany(post_views::class);
+        return $this->hasMany(post_views::class, 'post_id', 'id');
     }
 
 

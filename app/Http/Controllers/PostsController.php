@@ -8,6 +8,7 @@ use App\Models\posts;
 use App\Models\User;
 use App\Notifications\NewPostCreated;
 use Cache;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -293,16 +294,15 @@ class PostsController extends Controller
     public function getTrendingPosts()
     {
         try {
-            $posts = posts::with(['posts_user', 'authors'])
-                ->where('status', 'published')
-                // ->orderBy('views', 'desc')
+            $posts = posts::withCount('postViews')
+                ->orderBy('post_views_count', 'desc')
                 ->take(3)
                 ->get();
 
             return response()->json($posts, 200);
         } catch (Exception $e) {
             \Log::error("Error fetching trending posts: {$e->getMessage()}");
-            return response()->json(['message' => 'Lỗi khi lấy bài viết thịnh hành'], 500);
+            return response()->json(['message' => 'Lỗi khi lấy bài viết thịnh hành', 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -377,4 +377,31 @@ class PostsController extends Controller
         return response()->json($posts);
     }
 
+    public function getPostsByMonth()
+    {
+        try {
+            // $year = Carbon::now()->year;
+            $year = 2025;
+            $postsByMonth = posts::selectRaw('MONTH(created_at) as month, COUNT(*) as post_count')
+                ->whereYear('created_at', $year)
+                ->groupBy('month')
+                ->orderBy('month', 'asc')
+                ->get()
+                ->pluck('post_count', 'month')
+                ->toArray();
+
+            $result = [];
+            for ($month = 1; $month <= 12; $month++) {
+                $result[$month] = $postsByMonth[$month] ?? 0;
+            }
+
+            return response()->json([
+                'labels' => array_map(fn($m) => "Tháng $m", array_keys($result)),
+                'data' => array_values($result),
+            ], 200);
+        } catch (Exception $e) {
+            \Log::error("Error fetching posts by month: {$e->getMessage()}");
+            return response()->json(['message' => 'Lỗi khi lấy thống kê bài viết theo tháng', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

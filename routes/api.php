@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\PostLikesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostTagController;
+use App\Http\Controllers\PostViewsController;
 use App\Http\Controllers\RefuseReasonsController;
 use App\Http\Controllers\RefusesController;
 use App\Http\Controllers\TagsController;
@@ -41,7 +42,13 @@ Route::apiResource('categories', CategoriesController::class)->only(['index', 's
 ]);
 
 
+Route::post('/posts/{postId}/view', [PostViewsController::class, 'recordView']);
+Route::get('/posts/{postId}/view', [PostViewsController::class, 'getPostView']);
+Route::get('/posts/total-view', [PostViewsController::class, 'getTotalViews']);
+
+
 Route::get('/posts/count_post_by_category/{status}', [PostsController::class, 'getPostAmountByStatus']);
+Route::get('/posts/by-month', [PostsController::class, 'getPostsByMonth']);
 Route::get('/posts/featured', [PostsController::class, 'getFeaturedPost']);
 Route::get('/posts/sub-features', [PostsController::class, 'getSubFeatures']);
 Route::get('/posts/latest', [PostsController::class, 'getLatestPosts']);
@@ -50,7 +57,6 @@ Route::get('/posts/pending', [PostsController::class, 'getPendingPosts']);
 Route::get('/posts/archived', [PostsController::class, 'getArchivedPosts']);
 Route::get('/posts/scheduled', [PostsController::class, 'getScheduledPosts']);
 Route::get('/posts/search', [PostsController::class, 'search']);
-
 
 Route::put('authors/restore/{slug}', [AuthorsController::class, 'restore']);
 Route::get('authors/deleted', [AuthorsController::class, 'getDeletedAuthors']);
