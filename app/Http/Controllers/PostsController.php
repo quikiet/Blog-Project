@@ -294,7 +294,7 @@ class PostsController extends Controller
     public function getTrendingPosts()
     {
         try {
-            $posts = posts::withCount('postViews')
+            $posts = posts::withCount('postViews')->with(['posts_user', 'authors'])
                 ->orderBy('post_views_count', 'desc')
                 ->take(3)
                 ->get();

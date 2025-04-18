@@ -140,12 +140,15 @@ Route::prefix('users')->group(function () {
 
     Route::post('/', [UserController::class, 'store']);
 
+    Route::delete('/confirm/{id}', [UserController::class, 'destroyConfirmPw']);
+
     Route::prefix('{id}')->group(function () {
         Route::get('/', [UserController::class, 'show']);
 
         Route::put('/', [UserController::class, 'update']);
 
         Route::delete('/', [UserController::class, 'destroy']);
+
 
         Route::get('/posts', [UserController::class, 'getUserPosts']);
         Route::get('/comments', [UserController::class, 'getUserComments']);
