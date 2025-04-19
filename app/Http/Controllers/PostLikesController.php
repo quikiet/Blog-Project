@@ -96,7 +96,6 @@ class PostLikesController extends Controller
                 'user_id' => "required|exists:users,id"
             ]);
 
-            // Tìm lượt thích của user cho bài viết đó
             $postLike = post_likes::where('post_id', $validateFields['post_id'])
                 ->where('user_id', $validateFields['user_id'])
                 ->first();
@@ -105,7 +104,6 @@ class PostLikesController extends Controller
                 return response()->json(["message" => "Like not found"], 404);
             }
 
-            // Xóa lượt thích
             $postLike->delete();
             return response()->json(["message" => "Unliked successfully"], 200);
 

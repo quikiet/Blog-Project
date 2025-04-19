@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('restrict');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->unsignedBigInteger('author_id')->nullable()->change();
-            $table->foreign('author_id')->references('author_id')->on('authors')->onDelete('restrict');
+            $table->foreign('author_id')->references('id')->on('authors')->onDelete('restrict');
 
         });
     }

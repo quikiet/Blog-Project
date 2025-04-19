@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -10,6 +10,5 @@ Route::get('/', function () {
 require __DIR__ . '/auth.php';
 
 
-Route::get('/auth/google/redirect', [GoogleController::class, 'handleGoogleRedirect']);
-
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get("/auth/google/redirect", [RegisteredUserController::class, "googleLoginRedirect"]);
+Route::get('/auth/google/callback', [RegisteredUserController::class, "googleLoginCallback"]);
