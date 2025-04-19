@@ -11,8 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('oauth_id')->nullable;
-            $table->string('oauth_type')->nullable;
+            $table->string('oauth_id')->nullable();
+            $table->string('oauth_type')->nullable();
         });
     }
 

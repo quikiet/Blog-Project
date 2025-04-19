@@ -16,9 +16,6 @@ class VerifyCsrfToken
 
     protected $except = [
         'api/*',
-        'register',
-        'login',
-        'logout'
     ];
 
     public function handle(Request $request, Closure $next): Response

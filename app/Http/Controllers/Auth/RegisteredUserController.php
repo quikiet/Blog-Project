@@ -143,6 +143,7 @@ class RegisteredUserController extends Controller
             );
         } catch (Exception $exception) {
             return redirect()->to(
+                // 'http://localhost:4200/login?google=false&error=' . urlencode($exception->getMessage())
                 env('FRONTEND_URL') . '/login?google=false&error=' . urlencode($exception->getMessage())
             );
         }
