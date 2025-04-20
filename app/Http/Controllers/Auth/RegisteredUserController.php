@@ -120,7 +120,7 @@ class RegisteredUserController extends Controller
                     'oauth_id' => $googleUser->id,
                     'oauth_type' => 'google',
                 ]);
-                dd($user);
+                // dd($user);
                 $admins = User::where('role', 'admin')->get();
                 Notification::send($admins, new NewUserRegistered($user));
                 event(new Registered($user));
