@@ -86,6 +86,12 @@ class RegisteredUserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $user->tokens()->delete();
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
         return response()->json([
             'message' => 'Logged out',
         ], 200);

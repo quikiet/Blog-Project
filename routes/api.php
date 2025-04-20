@@ -33,7 +33,7 @@ Route::post('/register', [RegisteredUserController::class, 'register']);
 Route::post('/login', [RegisteredUserController::class, 'login']);
 
 Route::post('/logout', [RegisteredUserController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/me', [RegisteredUserController::class, 'me'])->middleware('auth:sanctum');
+Route::get('/me', [RegisteredUserController::class, 'me'])->middleware('auth:sanctum');
 // ->middleware('guest')
 // ->name('login');
 
