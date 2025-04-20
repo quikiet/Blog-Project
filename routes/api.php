@@ -47,6 +47,7 @@ Route::post('/posts/{postId}/view', [PostViewsController::class, 'recordView']);
 Route::get('/posts/{postId}/view', [PostViewsController::class, 'getPostView']);
 Route::get('/posts/total-view', [PostViewsController::class, 'getTotalViews']);
 
+Route::get('/posts/search-by-date', [PostsController::class, 'searchByDate']);
 
 Route::get('/posts/count_post_by_category/{status}', [PostsController::class, 'getPostAmountByStatus']);
 Route::get('/posts/by-month', [PostsController::class, 'getPostsByMonth']);
