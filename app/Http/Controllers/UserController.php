@@ -165,4 +165,32 @@ class UserController extends Controller
             'updated_at' => $user->updated_at,
         ];
     }
+
+    public function destroyConfirmPw(Request $request, string $id)
+    {
+        $userToDelete = User::findOrFail($id);
+
+        // Have you *completely* removed these blocks?
+        // if (!Auth::check()) { ... }
+        // $currentUser = Auth::user();
+
+        // The password check against the *current* user's password implies authentication
+        // If you want to bypass authentication, you might need to rethink this logic entirely.
+        // if (!Hash::check($request->input('password'), $currentUser->password)) { ... }
+
+        // If your goal is to delete *any* user with the correct password provided in the request,
+        // you would need to fetch the user to be deleted and check the password against *their* password.
+
+        // Example of deleting *any* user with the correct password (without checking logged-in user):
+        $passwordFromRequest = $request->input('password');
+        if ($passwordFromRequest && Hash::check($passwordFromRequest, $userToDelete->password)) {
+            $userToDelete->delete();
+            return response()->json(['message' => 'Tài khoản đã được xóa thành công.']);
+        } else {
+            return response()->json(['message' => 'Mật khẩu không chính xác.', 401]);
+        }
+    }
+
+
+
 }
