@@ -415,7 +415,12 @@ class PostsController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        $posts = posts::with('posts_user', 'authors', 'category')->whereBetween('published_at', [$request->start_date, $request->end_date])
+        $startDate = $request->start_date;
+        $endDate = Carbon::parse($request->end_date)->endOfDay();
+
+        $posts = posts::with('posts_user', 'authors', 'category')
+            ->where('published_at', '>=', $startDate)
+            ->where('published_at', '<=', $endDate)
             ->orderBy('published_at', 'desc')
             ->get();
 
