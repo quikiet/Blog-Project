@@ -63,10 +63,14 @@ class CategoriesController extends Controller
     public function show($slug)
     {
         try {
-
-            // $this->authorize('view', categories::class);
-
-            $post = categories::with('categories_posts')->where('slug', $slug)->first();
+            $post = categories::with([
+                'categories_posts' => function ($query) {
+                    $query->where('status', 'published')
+                        ->orWhere('status', 'archived');
+                }
+            ])
+                ->where('slug', $slug)
+                ->first();
 
             if (!$post) {
                 return response()->json([
