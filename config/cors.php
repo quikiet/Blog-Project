@@ -19,8 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:4200')],
-    // 'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://tqkdomain.io.vn/front-end',
+        'http://localhost:4200', // Thêm origin của frontend cục bộ
+    ],
 
     'allowed_origins_patterns' => [],
 

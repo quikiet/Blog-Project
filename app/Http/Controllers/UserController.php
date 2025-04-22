@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\posts;
+use Dotenv\Exception\ValidationException;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 
 
@@ -60,7 +64,11 @@ class UserController extends Controller
     public function show(string $id)
     {
         $user = User::findOrFail($id);
-        return $this->formatUserResponse($user);
+        // return $this->formatUserResponse($user);
+        return response()->json([
+            'message' => 'success',
+            'user' => $user
+        ]);
     }
 
     /**
@@ -68,26 +76,52 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        try {
+            $user = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password' => ['sometimes', Rules\Password::defaults()],
-            'role' => ['sometimes', 'string', 'in:admin,author,user'],
-            'avatar' => ['sometimes', 'url', 'max:255'], // Validate là URL
-        ]);
+            $validated = $request->validate([
+                'name' => ['sometimes', 'string', 'max:255'],
+                'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+                'password' => ['sometimes', Rules\Password::defaults()],
+                'role' => ['sometimes', 'string', 'in:admin,author,user'],
+                'avatar' => ['nullable', 'url', 'max:255'],
+                'phone' => ['nullable', 'string', 'max:10', 'unique:users,phone,' . $user->id],
+                'address' => ['nullable', 'string', 'max:255'],
+            ]);
 
-        if (isset($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
+            if (isset($validated['password'])) {
+                $validated['password'] = Hash::make($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return response()->json([
+                'message' => 'User updated successfully',
+                'user' => $this->formatUserResponse($user)
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'User not found.',
+            ], 404);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => 'Database query error.',
+                'error' => $e->getMessage()
+            ], 500);
+
+        } catch (Throwable $e) {
+            return response()->json([
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $user->update($validated);
-
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $this->formatUserResponse($user)
-        ]);
     }
 
     /**

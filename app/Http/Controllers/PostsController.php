@@ -261,10 +261,10 @@ class PostsController extends Controller
     {
         try {
             $posts = posts::with(['posts_user', 'authors'])
-                ->where('status', 'published')
-                ->orderBy('published_at', 'desc')
-                ->skip(1)
-                ->take(2)
+                ->where('status', 'archived')
+                ->where('thumbnail', '!=', '')
+                ->inRandomOrder()
+                ->take(1)
                 ->get();
 
             return response()->json($posts, 200);
@@ -311,6 +311,8 @@ class PostsController extends Controller
         try {
             $posts = posts::with(['posts_user', 'authors'])
                 ->where('status', 'archived')
+                ->inRandomOrder()
+                ->take(5)
                 ->get();
 
             return response()->json($posts, 200);
@@ -371,12 +373,9 @@ class PostsController extends Controller
 
         $posts = posts::where('status', 'published')
             ->orWhere('status', 'archived')
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'like', "%{$keyword}%")
-                    ->orWhere('summary', 'like', "%{$keyword}%")
-                    ->orWhere('content', 'like', "%{$keyword}%");
-            })
-            ->get();
+            ->where('title', 'like', "%{$keyword}%")->get();
+        // ->orWhere('summary', 'like', "%{$keyword}%")
+        // ->orWhere('content', 'like', "%{$keyword}%");
         return response()->json($posts);
     }
 

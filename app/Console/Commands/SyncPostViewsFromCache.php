@@ -29,7 +29,7 @@ class SyncPostViewsFromCache extends Command
     {
         $queueKeys = Cache::get('post:views:queue:keys', []);
         if (empty($queueKeys)) {
-            $this->info('No post views to sync.');
+            $this->info('Không có view để xử lý.');
             return;
         }
 
@@ -47,6 +47,6 @@ class SyncPostViewsFromCache extends Command
 
         Cache::forget('post:views:queue:keys');
 
-        $this->info('Post views synced from cache successfully.');
+        $this->info('Xử lý tăng view bái báo thành công.');
     }
 }

@@ -22,10 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',  // Thêm vào
-        'avatar', // Thêm vào
+        'role',
+        'avatar',
+        'address',
+        'phone',
         'oauth_id',
-        'oauth_type'
+        'oauth_type',
     ];
 
     /**

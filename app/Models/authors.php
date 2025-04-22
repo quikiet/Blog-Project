@@ -19,6 +19,8 @@ class authors extends Model
         'bio',
         'email',
         'avatar',
+        'phone',
+        'address'
     ];
 
     public function posts()
