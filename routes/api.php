@@ -61,6 +61,7 @@ Route::get('/posts/scheduled', [PostsController::class, 'getScheduledPosts']);
 Route::get('/posts/search', [PostsController::class, 'search']);
 
 Route::put('authors/restore/{slug}', [AuthorsController::class, 'restore']);
+Route::delete('authors/forceDelete/{slug}', [AuthorsController::class, 'forceDelete']);
 Route::get('authors/deleted', [AuthorsController::class, 'getDeletedAuthors']);
 Route::delete('authors/bulk', [AuthorsController::class, 'bulkDelete']);
 

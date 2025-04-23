@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostEditedNotification;
 use App\Mail\PostStatusChanged;
 use App\Models\categories;
 use App\Models\posts;
@@ -192,11 +193,43 @@ class PostsController extends Controller
 
             $validateFields['slug'] = Str::slug($validateFields['title']);
             $oldStatus = $post->status;
-            $post->update($validateFields);
-            if ($oldStatus !== $post->status) {
-                Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
+            $post->fill($validateFields);
+            if ($post->isDirty()) {
+
+                $changes = $post->getDirty();
+                $original = $post->getOriginal();
+
+                $changedDetails = [];
+
+                foreach ($changes as $field => $newValue) {
+                    $changedDetails[$field] = [
+                        'old' => $original[$field] ?? null,
+                        'new' => $newValue
+                    ];
+                }
+
+                $post->update($validateFields);
+
+                if ($oldStatus !== $post->status) {
+                    Mail::to($post->posts_user->email)->send(new PostStatusChanged($post, $post->posts_user));
+                }
+
+                $adminEmail = "quikiet24052003@gmail.com";
+                if ($post->posts_user->role === 'author') {
+                    Mail::to($adminEmail)->send(new PostEditedNotification($post, auth()->user(), $changedDetails));
+                }
+
+
+                return response()->json([
+                    'message' => 'Bài viết đã được cập nhật',
+                    'post' => $post
+                ], 200);
+
+            } else {
+                return response()->json([
+                    'message' => 'Không có thay đổi nào được thực hiện.',
+                ], 200);
             }
-            return response()->json(['message' => 'Cập nhật bài viết thành công']);
         } catch (Exception $e) {
             return response()->json([
                 "message" => "error",
@@ -204,6 +237,7 @@ class PostsController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Remove the specified resource from storage.

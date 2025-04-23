@@ -140,6 +140,20 @@ class AuthorsController extends Controller
         }
     }
 
+    public function forceDelete($slug)
+    {
+        try {
+            $author = authors::withTrashed()->where('slug', $slug)->firstOrFail();
+            $author->forceDelete();
+            return response()->json(['message' => 'Tác giả đã bị xoá vĩnh viễn'], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => "Đã xảy ra lỗi khi xoá vĩnh viễn tác giả!",
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getDeletedAuthors()
     {
         return authors::onlyTrashed()->get();
