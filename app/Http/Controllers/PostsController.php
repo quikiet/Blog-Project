@@ -405,11 +405,12 @@ class PostsController extends Controller
     {
         $keyword = $request->query('keyword');
 
-        $posts = posts::where('status', 'published')
-            ->orWhere('status', 'archived')
-            ->where('title', 'like', "%{$keyword}%")->get();
-        // ->orWhere('summary', 'like', "%{$keyword}%")
-        // ->orWhere('content', 'like', "%{$keyword}%");
+        $posts = posts::where(function ($query) {
+            $query->where('status', 'published')
+                  ->orWhere('status', 'archived');
+        })
+        ->where('title', 'like', "%{$keyword}%")
+        ->get();
         return response()->json($posts);
     }
 
